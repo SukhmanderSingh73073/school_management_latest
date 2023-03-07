@@ -1,0 +1,250 @@
+<?php
+
+namespace App\Models;
+
+use Carbon\Carbon;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use Laravel\Fortify\TwoFactorAuthenticatable;
+use Laravel\Jetstream\HasProfilePhoto;
+use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
+
+class User extends Authenticatable implements MustVerifyEmail
+{
+    use HasApiTokens;
+    use HasFactory;
+    use HasProfilePhoto;
+    use Notifiable;
+    use TwoFactorAuthenticatable;
+    use HasRoles;
+
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var string[]
+     */
+    protected $fillable = [
+        'name',
+        'email',
+        'password',
+        'role_type',
+        'birthday',
+        'address',
+        'blood_group',
+        'religion',
+        'nationality',
+        'phone',
+        'state',
+        'city',
+        'tehsil',
+        'locality',
+        'gender',
+        'school_id',
+        'aadhaar_number',
+        'caste',
+        'fname',
+        'mname',
+        'f_occupation' ,
+        'm_occupation'  ,
+        'previous_school' ,
+        'sub_caste',
+        'status',
+        'bank_name',
+        'ifsc',
+        'holder_name',
+        'acc_no',
+
+
+    ];
+
+    /**
+     * The attributes that should be hidden for serialization.
+     *
+     * @var array
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+        'two_factor_recovery_codes',
+        'two_factor_secret',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+        'birthday'          => 'datetime:Y-m-d',
+    ];
+
+    /**
+     * The accessors to append to the model's array form.
+     *
+     * @var array
+     */
+    protected $appends = [
+        'profile_photo_url',
+    ];
+
+    /**
+     * Get the school that owns the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function getSchool()
+    {
+        //return $this->hasMany(School::class);
+        return $this->hasOne(School::class , 'id' ,'school_id');
+    }
+    /**
+     * Get the school that owns the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function school()
+    {
+        return $this->belongsTo(School::class);
+    }
+
+    /**
+     * Get the studentRecord associated with the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function studentRecord()
+    {
+        return $this->hasOne(StudentRecord::class);
+    }
+
+    /**
+     * The parents that belong to the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function parents()
+    {
+        return $this->belongsToMany(ParentRecord::class);
+    }
+
+    /**
+     * Get the teacherRecord associated with the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function teacherRecord()
+    {
+        return $this->hasOne(TeacherRecord::class);
+    }
+
+    /**
+     * Get the parent records associated with the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function parentRecord()
+    {
+        return $this->hasOne(ParentRecord::class);
+    }
+
+    /**
+     * Get the AccountApplication associated with the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function accountApplication(): HasOne
+    {
+        return $this->hasOne(AccountApplication::class);
+    }
+
+    //get first name
+    public function firstName()
+    {
+        return explode(' ', $this->name)[0];
+    }
+
+
+
+    //get last name
+    public function lastName()
+    {
+        try {
+            return "";
+            // return explode(' ', $this->name)[1];
+        } catch (\Throwable $th) {
+            return "" ;
+        }
+
+    }
+
+    //get other names
+    public function otherNames()
+    {
+        return "" ;
+        //$names = array_diff_key(explode(' ', $this->name), array_flip([0, 1]));
+        //return implode(' ', $names);
+    }
+
+    public function defaultProfilePhotoUrl()
+    {
+        $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
+            return mb_substr($segment, 0, 1);
+        })->join(' '));
+
+        $email = trim($this->email);
+        $email = strtolower($email);
+        $email = md5($email);
+
+        return 'https://www.gravatar.com/avatar/'.$email.'?d=https%3A%2F%2Fui-avatars.com%2Fapi%2F/'.urlencode($name).'/300/EBF4FF/7F9CF5';
+    }
+
+    //accessor for birthday
+
+    public function getBirthdayAttribute($value)
+    {
+        return Carbon::parse($value)->format('Y/m/d');
+    }
+
+    /**
+     * The subjects that belong to the User.
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function subjects(): BelongsToMany
+    {
+        return $this->belongsToMany(Subject::class);
+    }
+
+    public function adminlte_image()
+    {
+        return $this->defaultProfilePhotoUrl();
+    }
+
+    public function adminlte_desc()
+    {
+        $description = [];
+        if ($this->school) {
+            $description[] = $this->school->academicYear ? 'Academic year: '.$this->school->academicYear->name() : '';
+            $description[] = $this->school->semester ? 'Semester: '.$this->school->semester->name : '';
+        }
+
+        return $descriptionString = implode(', ', $description);
+    }
+
+    public function adminlte_profile_url()
+    {
+        return 'profile/username';
+    }
+
+    public function schedules()
+    {
+        return $this->belongsToMany('App\Models\Schedule', 'schedule_users', 'user_id', 'schedule_id');
+    }
+
+}
