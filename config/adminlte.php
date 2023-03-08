@@ -285,15 +285,17 @@ return [
             'icon'  => 'fas fa-user',
             'text'  => 'Attendance',
             'route' => 'self_attendance',
-            'can'   => 'read self-attendance'
+            'can'   => 'read self-attendance',
+            // 'submenu' => [
+            //      [
+            //         'type'  => 'sidebar-menu-item',
+            //         'text'  => 'View Student Attendance',
+            //         'route' => 'view_check_student',
+            //         'can'   => 'read self-student-attendance',
+            //             ],
+            // ]
         ],
 
-        [
-            'type'  => 'sidebar-menu-item',
-            'text'  => 'View Student Attendance',
-            'route' => 'view_check_student',
-            'can'   => 'read self-student-attendance',
-        ],
         ///ADMIN MANAGMENT
         [
             'type'    => 'sidebar-menu-item',
@@ -302,6 +304,7 @@ return [
             'can'     => 'menu-admin',
             'route' => 'admins.index',
         ],
+
         ///Collage MANAGMENT
         [
             'type' => 'sidebar-menu-item',
@@ -319,6 +322,7 @@ return [
             'route' => 'managers.index',
             'can'   => 'menu-staff-manager'
         ],
+
         ///STUDENT MANAGMENT
         [
             'type'    => 'sidebar-menu-item',

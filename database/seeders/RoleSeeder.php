@@ -32,8 +32,6 @@ class RoleSeeder extends Seeder
             ['guard_name'=>'web' , 'name' => 'librarian'],
             ['guard_name'=>'web' , 'name' => 'applicant'],
             
-
-
             ],
             ['name']
             

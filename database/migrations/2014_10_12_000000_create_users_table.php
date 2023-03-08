@@ -18,6 +18,7 @@ return new class() extends Migration {
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('account_type')->nullable()->comment('1->super admin,2->manager,3->principle,4->office incharge,5->class teacher,6->teacher,7->student,8->parent');
             $table->string('role_type')->default('student');
             
             $table->rememberToken();
