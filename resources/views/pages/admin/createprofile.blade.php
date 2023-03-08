@@ -79,7 +79,7 @@ function changeHandler() {
         document.getElementById("admin").classList.add('d-none');
         document.getElementById("teacher").classList.add('d-none');
         document.getElementById("student").classList.remove('d-none');
-    
+      
     }
    
 }
