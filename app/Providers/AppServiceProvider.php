@@ -16,6 +16,7 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
+     //text
     public function register()
     {
         Paginator::useBootstrap();
