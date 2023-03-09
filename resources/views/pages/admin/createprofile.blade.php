@@ -43,11 +43,8 @@ name="role_type" label="Select Role Here *" fgroup-class="tttt col-md-3" enable-
     <div id="collage" class="d-none">
     @livewire('create-school-form')
     </div>
-    
-
 
     @livewire('display-status')
-    
     
     adminlte
 
